@@ -1,5 +1,7 @@
 public class Field {
 
+    // TODO: Add a more reliable way of determining if a field is a collection
+
     private String name;
     private String fieldType;
     private boolean mandatory; // Tries to see if this field is mandatory using hibernate annotations
@@ -49,6 +51,10 @@ public class Field {
                 || fieldType.equals("Integer")
                 || fieldType.equals("double")
                 || fieldType.equals("Double");
+    }
+
+    public boolean isCollection() {
+        return fieldType.contains("Set") || fieldType.contains("List");
     }
 
     @Override
