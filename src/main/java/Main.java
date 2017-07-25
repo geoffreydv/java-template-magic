@@ -18,19 +18,18 @@ public class Main {
 
 
         subjectNames.forEach(sn -> {
-            List<SourceClass> results = knowledgeBase.findClass(sn);
-
-            if (results.size() == 1) {
+            SourceClass result = knowledgeBase.findClass(sn);
+            if (result != null) {
                 System.out.println("-------------------");
                 System.out.println("Result for " + sn);
                 System.out.println("-------------------");
-                String output = generator.generate(results.get(0), "C:\\generator\\templates", "migration_classes.vm");
+                String output = generator.generate(result, "C:\\generator\\templates", "migration_classes.vm");
                 System.out.println(output);
                 System.out.println();
                 System.out.println();
                 System.out.println();
             } else {
-                System.out.println("Too many results found");
+                System.out.println("Class not found");
             }
         });
 

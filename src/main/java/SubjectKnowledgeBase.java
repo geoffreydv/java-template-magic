@@ -8,16 +8,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class SubjectKnowledgeBase {
 
-    private List<SourceClass> knownClasses = new ArrayList<>();
+    // TODO: Classes with same name will get overwritten
+    private Map<String, SourceClass> knownClasses = new HashMap<>();
 
     public void build(String sourceDirectory) throws IOException {
-
-        // TODO: Classes with same name will get overwritten
 
         Files.list(Paths.get(sourceDirectory))
                 .parallel()
@@ -35,7 +35,7 @@ public class SubjectKnowledgeBase {
                                 CompilationUnit cu = JavaParser.parse(new File(fileLocation.toString()));
                                 SourceClass classInformation = SourceClass.fromJavaFile(cu);
                                 if (classInformation != null) {
-                                    knownClasses.add(classInformation);
+                                    knownClasses.put(classInformation.getClassName(), classInformation);
                                 }
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
@@ -49,19 +49,31 @@ public class SubjectKnowledgeBase {
         sourceDirectories.parallelStream().forEach(sd -> {
             try {
                 build(sd);
+                appendFieldsOfParents();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
     }
 
-    public List<SourceClass> getKnownClasses() {
-        return knownClasses;
+    private void appendFieldsOfParents() {
+        knownClasses.values()
+                .forEach(cl -> {
+                    if (cl.getSuperClassName() != null) {
+                        SourceClass infoForParent = knownClasses.get(cl.getSuperClassName());
+                        if (infoForParent != null) {
+                            List<Field> finalFields = new ArrayList<>();
+                            finalFields.addAll(infoForParent.getFields());
+                            finalFields.addAll(cl.getFields());
+                            cl.setFields(finalFields);
+                        }
+
+                    }
+                });
     }
 
-    public List<SourceClass> findClass(String subjectName) {
-        return knownClasses.stream()
-                .filter(clazz -> clazz.getClassName().equalsIgnoreCase(subjectName))
-                .collect(Collectors.toList());
+    public SourceClass findClass(String subjectName) {
+        return knownClasses.get(subjectName);
     }
 }

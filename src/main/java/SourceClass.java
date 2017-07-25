@@ -48,6 +48,14 @@ public class SourceClass {
         return className.substring(0, 1).toLowerCase() + className.substring(1, className.length());
     }
 
+    public void addField(Field field) {
+        fields.add(field);
+    }
+
+    public void setFields(List<Field> fields) {
+        this.fields = fields;
+    }
+
     public static SourceClass fromJavaFile(CompilationUnit compilationUnit) {
 
         Optional<ClassOrInterfaceDeclaration> classDefinition = compilationUnit.getChildNodesByType(ClassOrInterfaceDeclaration.class)
