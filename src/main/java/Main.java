@@ -5,23 +5,28 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException {
         SubjectKnowledgeBase knowledgeBase = buildKnowledgeBase();
+
+        List<String> templates = new ArrayList<>();
+        templates.add("ext-model-and-store.vm");
+        templates.add("DTO.vm");
+
         generateTemplatesForClass(knowledgeBase,
-                "OffloadedUnderlyingInformation",
-                "migration_classes.vm");
+                "FQA",
+                templates);
     }
 
     private static void generateTemplatesForClass(SubjectKnowledgeBase knowledgeBase,
                                                   String className,
-                                                  String templateName) {
-        ClassTemplateGenerator generator = new ClassTemplateGenerator();
+                                                  List<String> templateNames) {
 
         List<String> subjectNames = new ArrayList<>();
         subjectNames.add(className);
 
+        ClassTemplateGenerator generator = new ClassTemplateGenerator("C:\\generator\\templates\\credo");
         subjectNames.forEach(sn -> {
-            SourceClass result = knowledgeBase.findClass(sn);
-            if (result != null) {
-                String output = generator.generate(result, "C:\\generator\\templates", templateName);
+            SourceClass sourceClass = knowledgeBase.findClass(sn);
+            if (sourceClass != null) {
+                String output = generator.generate(sourceClass, templateNames);
                 System.out.println(output);
             } else {
                 System.out.println("Class not found");

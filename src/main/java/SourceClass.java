@@ -17,7 +17,7 @@ public class SourceClass {
     private List<Field> fields;
     private String superClassName;
 
-    public SourceClass(String packageName, String className, List<Field> fields) {
+    private SourceClass(String packageName, String className, List<Field> fields) {
         this.className = className;
         this.packageName = packageName;
         this.fields = fields;
@@ -44,8 +44,12 @@ public class SourceClass {
         return className;
     }
 
-    public String getClassNameLower() {
+    public String getNameFirstCharLowerCase() {
         return className.substring(0, 1).toLowerCase() + className.substring(1, className.length());
+    }
+
+    public String getNameAsLowerCase() {
+        return className.toLowerCase();
     }
 
     public void addField(Field field) {
