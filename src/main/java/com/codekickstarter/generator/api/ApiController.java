@@ -47,7 +47,7 @@ public class ApiController {
         Map<String, String> additionalProperties = new HashMap<>();
         additionalProperties.put("extPackage", "configuration");
 
-        ClassTemplateGenerator generator = new ClassTemplateGenerator(knowledgeBaseService.getSourceDirectory());
+        ClassTemplateGenerator generator = new ClassTemplateGenerator(knowledgeBaseService.getTemplateDirectory());
         SourceClass sourceClass = knowledgeBase.findClass(command.getClassName());
         List<GeneratedCode> output = generator.generate(sourceClass, command.getSelectedTemplates(), additionalProperties);
 

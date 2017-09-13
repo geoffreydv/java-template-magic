@@ -17,6 +17,7 @@ public class KnowledgeBaseService {
     private SubjectKnowledgeBase knowledgeBase;
     private List<String> templates = new ArrayList<>();
     private String sourceDirectory;
+    private String templateDirectory;
 
     @Autowired
     public KnowledgeBaseService(@Value("${app.source.directory}") String sourceDirectory,
@@ -25,6 +26,7 @@ public class KnowledgeBaseService {
         this.knowledgeBase = buildKnowledgeBase(sourceDirectory);
         this.templates = buildTemplateList(templateDirectory);
         this.sourceDirectory = sourceDirectory;
+        this.templateDirectory = templateDirectory;
     }
 
     private List<String> buildTemplateList(String templateDirectory) throws IOException {
@@ -48,7 +50,7 @@ public class KnowledgeBaseService {
         return templates;
     }
 
-    public String getSourceDirectory() {
-        return sourceDirectory;
+    public String getTemplateDirectory() {
+        return templateDirectory;
     }
 }
