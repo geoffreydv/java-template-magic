@@ -1,3 +1,5 @@
+package com.codekickstarter.generator.core;
+
 public class Field {
 
     // TODO: Add a more reliable way of determining if a field is a collection

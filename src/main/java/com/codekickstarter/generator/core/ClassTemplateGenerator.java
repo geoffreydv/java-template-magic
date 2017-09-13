@@ -1,31 +1,35 @@
+package com.codekickstarter.generator.core;
+
+import com.codekickstarter.generator.api.GeneratedCode;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
 import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Properties;
+import java.util.*;
 
-class ClassTemplateGenerator {
+public class ClassTemplateGenerator {
 
-    ClassTemplateGenerator(String filePath) {
+    public ClassTemplateGenerator(String filePath) {
         Properties p = new Properties();
         p.setProperty("file.resource.loader.path", filePath);
         Velocity.init(p);
     }
 
-    String generate(SourceClass sourceClass, Collection<String> templateNames) {
+    public List<GeneratedCode> generate(SourceClass sourceClass, Collection<String> templateNames, Map<String, String> additionalProperties) {
         VelocityContext context = buildContext(sourceClass);
+        additionalProperties.forEach(context::put);
 
-        StringWriter sw = new StringWriter();
+        List<GeneratedCode> results = new ArrayList<>();
+
         for (String templateName : templateNames) {
-            sw.write("Results for template: '"+ templateName +"'\n\n");
+            StringWriter sw = new StringWriter();
             Template template = Velocity.getTemplate(templateName);
             template.merge(context, sw);
-            sw.write("\n\n");
+            results.add(new GeneratedCode(templateName, sw.toString()));
         }
 
-        return sw.toString();
+        return results;
     }
 
     private VelocityContext buildContext(SourceClass sourceClass) {

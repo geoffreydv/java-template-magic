@@ -1,3 +1,5 @@
+package com.codekickstarter.generator.core;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import org.apache.commons.io.FilenameUtils;
