@@ -19,8 +19,8 @@ public class KnowledgeBaseService {
     private String sourceDirectory;
 
     @Autowired
-    public KnowledgeBaseService(@Value("${app.source.directory") String sourceDirectory,
-                                @Value("${app.template.directory") String templateDirectory) throws IOException {
+    public KnowledgeBaseService(@Value("${app.source.directory}") String sourceDirectory,
+                                @Value("${app.template.directory}") String templateDirectory) throws IOException {
 
         this.knowledgeBase = buildKnowledgeBase(sourceDirectory);
         this.templates = buildTemplateList(templateDirectory);
