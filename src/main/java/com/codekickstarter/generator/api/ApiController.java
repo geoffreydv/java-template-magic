@@ -30,6 +30,12 @@ public class ApiController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/list-known-classes")
+    public List<String> listKnownClasses() throws IOException {
+        SubjectKnowledgeBase knowledgeBase = buildKnowledgeBase();
+        return knowledgeBase.getKnownClassNames();
+    }
+
     @PostMapping(value = "/generate",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

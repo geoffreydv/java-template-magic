@@ -1,8 +1,16 @@
 $(document).ready(function () {
+
+    var $template = $("#template-selection");
+    var $entityClass = $("#entity-class");
+
     $.get("http://localhost:8080/list-templates", {}, function (templateNames) {
         for (var i = 0; i < templateNames.length; i++) {
-            $("#template-selection").append($("<option value='" + templateNames[i] + "'>" + templateNames[i] + "</option>"));
+            $template.append($("<option value='" + templateNames[i] + "'>" + templateNames[i] + "</option>"));
         }
+    });
+
+    $.get("http://localhost:8080/list-known-classes", {}, function (classNames) {
+        $entityClass.typeahead({source: classNames});
     });
 
     var $output = $("#output");

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SubjectKnowledgeBase {
 
@@ -77,5 +78,12 @@ public class SubjectKnowledgeBase {
 
     public SourceClass findClass(String subjectName) {
         return knownClasses.get(subjectName);
+    }
+
+    public List<String> getKnownClassNames() {
+        return knownClasses.keySet()
+                .stream()
+                .sorted(String::compareToIgnoreCase)
+                .collect(Collectors.toList());
     }
 }
