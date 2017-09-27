@@ -1,11 +1,14 @@
 package com.codekickstarter.generator.core;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 import java.util.List;
 import java.util.Optional;
@@ -72,9 +75,30 @@ public class SourceClass {
 
             List<Field> fieldNames = compilationUnit.getChildNodesByType(FieldDeclaration.class).stream()
                     .map(f -> {
-                                Field field = new Field(
-                                        f.getVariables().get(0).getName().toString(),
-                                        f.getVariables().get(0).getType().toString());
+                                final VariableDeclarator variableDeclaration = f.getVariables().get(0);
+
+                                Field field;
+                                if (hasTypeArguments(variableDeclaration)) {
+
+                                    final String baseType = ((ClassOrInterfaceType) variableDeclaration.getType()).getName().toString();
+                                    final List<String> types = ((ClassOrInterfaceType) variableDeclaration.getType()).getTypeArguments().get()
+                                            .stream()
+                                            .map(Node::toString)
+                                            .collect(Collectors.toList());
+
+                                    field = new Field(
+                                            variableDeclaration.getName().toString(),
+                                            variableDeclaration.getType().toString(),
+                                            baseType,
+                                            types
+                                    );
+                                } else {
+                                    field = new Field(
+                                            variableDeclaration.getName().toString(),
+                                            variableDeclaration.getType().toString());
+
+                                }
+
 
                                 // Try to find a hibernate not null annotation
                                 Optional<AnnotationExpr> columnAnnotation = f.getAnnotationByName("Column");
@@ -106,6 +130,10 @@ public class SourceClass {
         } else {
             return null;
         }
+    }
+
+    private static boolean hasTypeArguments(VariableDeclarator variableDeclaration) {
+        return variableDeclaration.getType().getChildNodes().size() > 1;
     }
 
     public void setSuperClassName(String superClassName) {

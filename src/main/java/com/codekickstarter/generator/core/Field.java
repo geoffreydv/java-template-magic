@@ -1,5 +1,7 @@
 package com.codekickstarter.generator.core;
 
+import java.util.List;
+
 public class Field {
 
     // TODO: Add a more reliable way of determining if a field is a collection
@@ -7,14 +9,30 @@ public class Field {
     private String name;
     private String fieldType;
     private boolean mandatory; // Tries to see if this field is mandatory using hibernate annotations
+    private String baseType;
+    private String typeArgument;
 
     public Field(String name, String fieldType) {
         this.name = name;
         this.fieldType = fieldType;
     }
 
+    public Field(String name, String fieldType, String baseType, List<String> types) {
+        this(name, fieldType);
+        this.baseType = baseType;
+        typeArgument = types.get(0);
+    }
+
     public String getName() {
         return name;
+    }
+
+    public String getTypeArgument() {
+        return typeArgument;
+    }
+
+    public String getBaseType() {
+        return baseType;
     }
 
     public String getUpperCaseName() {
@@ -22,14 +40,14 @@ public class Field {
     }
 
     public String getGetter() {
-        String getter = "public " + fieldType +" get" + getUpperCaseName() + "() {\n";
+        String getter = "public " + fieldType + " get" + getUpperCaseName() + "() {\n";
         getter += "        return this." + name + ";\n";
         getter += "   }\n";
         return getter;
     }
 
     public String getSetter() {
-        String getter = "public void set" + getUpperCaseName() + "("+fieldType+" " + name + ") {\n";
+        String getter = "public void set" + getUpperCaseName() + "(" + fieldType + " " + name + ") {\n";
         getter += "        this." + name + " = " + name + ";\n";
         getter += "    }\n";
         return getter;
@@ -45,7 +63,7 @@ public class Field {
 
     public boolean isDate() {
         return fieldType.equals("LocalDate")
-                ||fieldType.equals("LocalDateTime");
+                || fieldType.equals("LocalDateTime");
     }
 
     public boolean isNumeric() {

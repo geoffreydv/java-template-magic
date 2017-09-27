@@ -4,6 +4,7 @@ import com.codekickstarter.generator.api.GeneratedCode;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.tools.generic.EscapeTool;
 
 import java.io.StringWriter;
 import java.util.*;
@@ -20,6 +21,7 @@ public class ClassTemplateGenerator {
         VelocityContext context = buildContext(sourceClass);
         additionalProperties.forEach(context::put);
         context.put("utils", new Utils());
+        context.put("esc", new EscapeTool());
 
         List<GeneratedCode> results = new ArrayList<>();
 
