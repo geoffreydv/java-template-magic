@@ -19,6 +19,7 @@ public class ClassTemplateGenerator {
     public List<GeneratedCode> generate(SourceClass sourceClass, Collection<String> templateNames, Map<String, String> additionalProperties) {
         VelocityContext context = buildContext(sourceClass);
         additionalProperties.forEach(context::put);
+        context.put("utils", new Utils());
 
         List<GeneratedCode> results = new ArrayList<>();
 
