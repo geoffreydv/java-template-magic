@@ -1,5 +1,6 @@
 package com.codekickstarter.generator.core;
 
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class KnowledgeBaseService {
 
     private SubjectKnowledgeBase buildKnowledgeBase(String sourceDirectory) throws IOException {
         SubjectKnowledgeBase knowledgeBase = new SubjectKnowledgeBase();
-        knowledgeBase.build(sourceDirectory);
+        knowledgeBase.build(Lists.newArrayList(sourceDirectory));
         return knowledgeBase;
     }
 

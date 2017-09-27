@@ -20,7 +20,7 @@ public class SubjectKnowledgeBase {
     // TODO: Classes with same name will get overwritten
     private Map<String, SourceClass> knownClasses = new HashMap<>();
 
-    public void build(String sourceDirectory) throws IOException {
+    private void build(String sourceDirectory) throws IOException {
 
         Files.list(Paths.get(sourceDirectory))
                 .parallel()
@@ -48,7 +48,7 @@ public class SubjectKnowledgeBase {
                 });
     }
 
-    public void build(List<String> sourceDirectories) throws IOException {
+    void build(List<String> sourceDirectories) throws IOException {
         sourceDirectories.parallelStream().forEach(sd -> {
             try {
                 build(sd);
@@ -62,18 +62,26 @@ public class SubjectKnowledgeBase {
 
     private void appendFieldsOfParents() {
         knownClasses.values()
-                .forEach(cl -> {
-                    if (cl.getSuperClassName() != null) {
-                        SourceClass infoForParent = knownClasses.get(cl.getSuperClassName());
-                        if (infoForParent != null) {
-                            List<Field> finalFields = new ArrayList<>();
-                            finalFields.addAll(infoForParent.getFields());
-                            finalFields.addAll(cl.getFields());
-                            cl.setFields(finalFields);
-                        }
-
-                    }
+                .forEach(sourceClass -> {
+                    addFieldsOfParent(sourceClass, sourceClass.getSuperClassName());
                 });
+    }
+
+    private void addFieldsOfParent(SourceClass sourceClass, String parentClassName) {
+
+        if (sourceClass.getSuperClassName() != null) {
+            SourceClass infoForParent = knownClasses.get(parentClassName);
+            if (infoForParent != null) {
+                List<Field> finalFields = new ArrayList<>();
+                finalFields.addAll(infoForParent.getFields());
+                finalFields.addAll(sourceClass.getFields());
+                sourceClass.setFields(finalFields);
+
+                if (infoForParent.getSuperClassName() != null) {
+                    addFieldsOfParent(sourceClass, infoForParent.getSuperClassName());
+                }
+            }
+        }
     }
 
     public SourceClass findClass(String subjectName) {
