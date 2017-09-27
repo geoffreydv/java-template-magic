@@ -38,7 +38,7 @@ public class SubjectKnowledgeBase {
                                 CompilationUnit cu = JavaParser.parse(new File(fileLocation.toString()));
                                 SourceClass classInformation = SourceClass.fromJavaFile(cu);
                                 if (classInformation != null) {
-                                    knownClasses.put(classInformation.getClassName(), classInformation);
+                                    knownClasses.put(classInformation.getFullyQualifiedClassName(), classInformation);
                                 }
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
@@ -63,14 +63,14 @@ public class SubjectKnowledgeBase {
     private void appendFieldsOfParents() {
         knownClasses.values()
                 .forEach(sourceClass -> {
-                    addFieldsOfParent(sourceClass, sourceClass.getSuperClassName());
+                    addFieldsOfParent(sourceClass, sourceClass.getSuperClassFullyQualifiedName());
                 });
     }
 
-    private void addFieldsOfParent(SourceClass sourceClass, String parentClassName) {
+    private void addFieldsOfParent(SourceClass sourceClass, String fullyQualifiedName) {
 
         if (sourceClass.getSuperClassName() != null) {
-            SourceClass infoForParent = knownClasses.get(parentClassName);
+            SourceClass infoForParent = knownClasses.get(fullyQualifiedName);
             if (infoForParent != null) {
                 List<Field> finalFields = new ArrayList<>();
                 finalFields.addAll(infoForParent.getFields());
@@ -78,7 +78,7 @@ public class SubjectKnowledgeBase {
                 sourceClass.setFields(finalFields);
 
                 if (infoForParent.getSuperClassName() != null) {
-                    addFieldsOfParent(sourceClass, infoForParent.getSuperClassName());
+                    addFieldsOfParent(sourceClass, infoForParent.getSuperClassFullyQualifiedName());
                 }
             }
         }

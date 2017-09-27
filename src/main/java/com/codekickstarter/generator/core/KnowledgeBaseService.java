@@ -17,7 +17,6 @@ public class KnowledgeBaseService {
 
     private SubjectKnowledgeBase knowledgeBase;
     private List<String> templates = new ArrayList<>();
-    private String sourceDirectory;
     private String templateDirectory;
 
     @Autowired
@@ -26,7 +25,6 @@ public class KnowledgeBaseService {
 
         this.knowledgeBase = buildKnowledgeBase(sourceDirectory);
         this.templates = buildTemplateList(templateDirectory);
-        this.sourceDirectory = sourceDirectory;
         this.templateDirectory = templateDirectory;
     }
 

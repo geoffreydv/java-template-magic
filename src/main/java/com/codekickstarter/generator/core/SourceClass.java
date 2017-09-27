@@ -1,6 +1,7 @@
 package com.codekickstarter.generator.core;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -16,10 +17,10 @@ import java.util.stream.Collectors;
 
 public class SourceClass {
 
-    private String parentClass;
     private String className;
     private String packageName;
     private List<Field> fields;
+    private String superClassPackage;
     private String superClassName;
 
     private SourceClass(String packageName, String className, List<Field> fields) {
@@ -121,8 +122,23 @@ public class SourceClass {
             SourceClass sourceClass = new SourceClass(packageName, className, fieldNames);
 
             if (!classDefinition.get().getExtendedTypes().isEmpty()) {
+
                 String superClassName = classDefinition.get().getExtendedTypes().get(0).getName().getIdentifier();
                 sourceClass.setSuperClassName(superClassName);
+
+                String superClassPackage = null;
+                for (ImportDeclaration importDeclaration : compilationUnit.getImports()) {
+                    if (importDeclaration.getNameAsString().endsWith(superClassName)) {
+                        int index = importDeclaration.getNameAsString().lastIndexOf(".");
+                        superClassPackage = importDeclaration.getNameAsString().substring(0, index);
+                    }
+                }
+                if (superClassPackage == null) {
+                    superClassPackage = packageName;
+                }
+
+                sourceClass.setSuperClassPackage(superClassPackage);
+
             }
 
             return sourceClass;
@@ -132,8 +148,21 @@ public class SourceClass {
         }
     }
 
+    private static String getPackage(ClassOrInterfaceType classOrInterfaceType) {
+        return ((CompilationUnit) classOrInterfaceType.getParentNode().get().getParentNode().get()).getPackageDeclaration().get().getName().toString();
+    }
+
+
     private static boolean hasTypeArguments(VariableDeclarator variableDeclaration) {
         return variableDeclaration.getType().getChildNodes().size() > 1;
+    }
+
+    public String getSuperClassPackage() {
+        return superClassPackage;
+    }
+
+    public void setSuperClassPackage(String superClassPackage) {
+        this.superClassPackage = superClassPackage;
     }
 
     public void setSuperClassName(String superClassName) {
@@ -142,5 +171,9 @@ public class SourceClass {
 
     public String getSuperClassName() {
         return superClassName;
+    }
+
+    public String getSuperClassFullyQualifiedName() {
+        return superClassPackage + "." + superClassName;
     }
 }
