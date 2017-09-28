@@ -34,7 +34,7 @@ $(document).ready(function () {
                     $output.append("<div class=\"card\">\n" +
                         "<div class=\"card-body\">\n" +
                         "<pre>" +
-                        response[i].generatedCode +
+                        htmlEncode(response[i].generatedCode) +
                         "</pre>" +
                         "</div>\n" +
                         "</div><br />"
@@ -45,4 +45,10 @@ $(document).ready(function () {
 
         return false;
     });
+
+    function htmlEncode(value){
+        // Create a in-memory div, set its inner text (which jQuery automatically encodes)
+        // Then grab the encoded contents back out. The div never exists on the page.
+        return $('<div/>').text(value).html();
+    }
 });
